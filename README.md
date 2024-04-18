@@ -1,5 +1,8 @@
 # Hitbot
+[![license - MIT](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![ROS2 Foxy](https://img.shields.io/badge/ROS2-Foxy-green.svg)](https://index.ros.org/doc/ros2/Releases/)
 
+# Note
 This repository is ROS2-Foxy Package for the [Z-Arm of Hitbot.](https://www.hitbotrobot.com/category/product-center/4-axis-robot-arm/)
 
 It contain python-api and .so file
