@@ -1,9 +1,11 @@
 import sys
+import os
 import rclpy
 import time
 from std_msgs.msg import Int64, Bool
 from rclpy.node import Node
 
+os.chdir(os.path.expanduser('~'))
 sys.path.append("./hitbot_ws/src/hitbot")  ## get import pass: hitbot_interface.py
 from hitbot_interface import HitbotInterface
 
