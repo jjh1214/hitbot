@@ -17,7 +17,7 @@ There is no simulation, just a real robot is connected and used.
 
 $ mkdir -p ~/hitbot_ws/src
 $ cd ~/hitbot_ws/src
-$ git clone https://github.com/jjh1214/Hitbot.git
+$ git clone https://github.com/jjh1214/hitbot.git
 $ cd ~/hitbot_ws
 $ colcon build
 $ . install/setup.bash
