@@ -44,7 +44,7 @@ class HitbotController(Node):
             10
         )
 
-        self.robot_id = 123  ## Modify your robot id
+        self.robot_id = 123  ## 123 is robot_id, Modify it to your own
         self.robot = HitbotInterface(self.robot_id)
 
         self.init_robot()
@@ -97,7 +97,7 @@ class HitbotController(Node):
                 rclpy.spin_once(self)
                 self.robot.new_movej_xyz_lr(self.hitbot_x, self.hitbot_y, self.hitbot_z, 0, 100, 1, 1)
                 self.robot.wait_stop()
-                self.robot.set_digital_out(5, self.io_set)
+                self.robot.set_digital_out(5, self.io_set) ## I only used pin 5. Change it to whatever pin number you want and use it. I'll update with a different approach later.
             except ValueError as e:
                 print("Error:", str(e))
             except RuntimeError as e:
