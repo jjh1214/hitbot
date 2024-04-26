@@ -2,8 +2,9 @@ import sys
 import os
 import rclpy
 import time
-from std_msgs.msg import Int64, Bool
 from rclpy.node import Node
+from std_msgs.msg import Int64
+from hitbot_msgs.srv import SetGPIO
 
 os.chdir(os.path.expanduser('~'))
 sys.path.append("./hitbot_ws/src/hitbot")  ## get import pass: hitbot_interface.py
@@ -13,10 +14,11 @@ class HitbotController(Node):
     def __init__(self):
         super().__init__('hitbot_controller')
 
+        self.srv = self.create_service(SetGPIO, 'set_gpio', self.set_gpio_callback)
+
         self.hitbot_x = 0
         self.hitbot_y = 0
         self.hitbot_z = 0
-        self.io_set = False
 
         self.subscription = self.create_subscription(
             Int64,
@@ -39,13 +41,6 @@ class HitbotController(Node):
             10
         )
 
-        self.subscription = self.create_subscription(
-            Bool,
-            '/io_set',
-            self.io_set_callback,
-            10
-        )
-
         self.robot_id = 123  ## 123 is robot_id, Modify it to your own
         self.robot = HitbotInterface(self.robot_id)
 
@@ -60,8 +55,27 @@ class HitbotController(Node):
     def hitbot_z_callback(self, msg):
         self.hitbot_z = msg.data
 
-    def io_set_callback(self, msg):
-        self.io_set = msg.data
+    def set_gpio_callback(self, request, response):
+        max_retries = 3
+        retries = 0
+        
+        while retries < max_retries:
+            try:
+                self.robot.set_digital_out(request.gpio_number, request.set_on)
+                response.success = True
+                self.get_logger().info('GPIO setting successful: gpio_number=%d, set_on=%r' % (request.gpio_number, request.set_on))
+                break
+            except Exception as e:
+                self.get_logger().error('Failed to set GPIO: %s' % str(e))
+                response.success = False
+                retries += 1
+                if retries < max_retries:
+                    self.get_logger().info('Retrying GPIO setting (attempt %d)...' % retries)
+                else:
+                    self.get_logger().error('Max retries exceeded. Failed to set GPIO.')
+                    break
+
+        return response
 
     def init_robot(self):
         self.robot.net_port_initial()
@@ -99,7 +113,6 @@ class HitbotController(Node):
                 rclpy.spin_once(self)
                 self.robot.new_movej_xyz_lr(self.hitbot_x, self.hitbot_y, self.hitbot_z, 0, 100, 1, 1)
                 self.robot.wait_stop()
-                self.robot.set_digital_out(5, self.io_set) ## I only used pin 5. Change it to whatever pin number you want and use it. I'll update with a different approach later.
             except ValueError as e:
                 print("Error:", str(e))
             except RuntimeError as e:
