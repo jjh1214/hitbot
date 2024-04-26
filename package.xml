@@ -3,9 +3,9 @@
 <package format="3">
   <name>hitbot</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Hitbot Z-Arm robot control with ROS2</description>
   <maintainer email="seedn7777@cwsfa.co.kr">dev_jung</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT License</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
