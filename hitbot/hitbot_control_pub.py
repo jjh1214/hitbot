@@ -38,7 +38,7 @@ class HitbotControl(Node):
 
     def set_gpio(self, gpio_number, set_on):
         req = SetGPIO.Request()
-        req.gpio_number = gpio_number   
+        req.gpio_number = gpio_number
         req.set_on = set_on
 
         future = self.set_gpio_client.call_async(req)

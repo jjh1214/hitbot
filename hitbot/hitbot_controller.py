@@ -4,7 +4,7 @@ import rclpy
 import time
 from rclpy.node import Node
 from std_msgs.msg import Int64
-from hitbot_msgs.srv import SetGPIO
+from hitbot_msgs.srv import *
 
 os.chdir(os.path.expanduser('~'))
 sys.path.append("./hitbot_ws/src/hitbot")  ## get import pass: hitbot_interface.py
@@ -14,7 +14,9 @@ class HitbotController(Node):
     def __init__(self):
         super().__init__('hitbot_controller')
 
-        self.srv = self.create_service(SetGPIO, 'set_gpio', self.set_gpio_callback)
+        self.SetGPIO_srv = self.create_service(SetGPIO, 'set_gpio', self.set_gpio_callback)
+        self.GetGPIOOut_srv = self.create_service(GetGPIOOut, 'get_gpio_out', self.get_gpio_out_callback)
+        self.GetGPIOIn_srv = self.create_service(GetGPIOIn, 'get_gpio_in', self.get_gpio_in_callback)
 
         self.hitbot_x = 0
         self.hitbot_y = 0
@@ -73,6 +75,68 @@ class HitbotController(Node):
                     self.get_logger().info('Retrying GPIO setting (attempt %d)...' % retries)
                 else:
                     self.get_logger().error('Max retries exceeded. Failed to set GPIO.')
+                    break
+
+        return response
+    
+    def get_gpio_out_callback(self, request, response):
+        max_retries = 3
+        retries = 0
+        
+        while retries < max_retries:
+            try:
+                self.robot.get_digital_out(request.gpio_number)
+                response.success = True
+                if self.robot.get_digital_out(request.gpio_number) == 1:
+                    self.get_logger().info('GPIO : gpio_number=%d is On' % (request.gpio_number))
+                elif self.robot.get_digital_out(request.gpio_number) == 0:
+                    self.get_logger().info('GPIO : gpio_number=%d is Off' % (request.gpio_number))
+                elif self.robot.get_digital_out(request.gpio_number) == -1:
+                    self.get_logger().info('GPIO number parameter error')
+                elif self.robot.get_digital_out(request.gpio_number) == 3:
+                    self.get_logger().info('GPIO Not initialized.')
+                else:
+                    pass
+                break
+            except Exception as e:
+                self.get_logger().error('Failed to get GPIO: %s' % str(e))
+                response.success = False
+                retries += 1
+                if retries < max_retries:
+                    self.get_logger().info('Retrying GPIO status (attempt %d)...' % retries)
+                else:
+                    self.get_logger().error('Max retries exceeded. Failed to get GPIO.')
+                    break
+
+        return response
+    
+    def get_gpio_in_callback(self, request, response):
+        max_retries = 3
+        retries = 0
+        
+        while retries < max_retries:
+            try:
+                self.robot.get_digital_out(request.gpio_number)
+                response.success = True
+                if self.robot.get_digital_out(request.gpio_number) == 1:
+                    self.get_logger().info('GPIO : gpio_number=%d is triggered' % (request.gpio_number))
+                elif self.robot.get_digital_out(request.gpio_number) == 0:
+                    self.get_logger().info('GPIO : gpio_number=%d is not triggered' % (request.gpio_number))
+                elif self.robot.get_digital_out(request.gpio_number) == -1:
+                    self.get_logger().info('GPIO number parameter error')
+                elif self.robot.get_digital_out(request.gpio_number) == 3:
+                    self.get_logger().info('GPIO Not initialized.')
+                else:
+                    pass
+                break
+            except Exception as e:
+                self.get_logger().error('Failed to get GPIO: %s' % str(e))
+                response.success = False
+                retries += 1
+                if retries < max_retries:
+                    self.get_logger().info('Retrying GPIO status (attempt %d)...' % retries)
+                else:
+                    self.get_logger().error('Max retries exceeded. Failed to get GPIO.')
                     break
 
         return response
