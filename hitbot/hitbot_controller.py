@@ -4,6 +4,7 @@ import rclpy
 import time
 from rclpy.node import Node
 from std_msgs.msg import Int64
+from sensor_msgs.msg import JointState
 from hitbot_msgs.srv import *
 
 os.chdir(os.path.expanduser('~'))
@@ -21,6 +22,7 @@ class HitbotController(Node):
         self.hitbot_x = 0
         self.hitbot_y = 0
         self.hitbot_z = 0
+        self.hitbot_r = 0
 
         self.subscription = self.create_subscription(
             Int64,
@@ -43,6 +45,13 @@ class HitbotController(Node):
             10
         )
 
+        self.subscription = self.create_subscription(
+            Int64,
+            '/hitbot_r',
+            self.hitbot_r_callback,
+            10
+        )
+
         self.robot_id = 123  ## 123 is robot_id, Modify it to your own
         self.robot = HitbotInterface(self.robot_id)
 
@@ -56,6 +65,9 @@ class HitbotController(Node):
 
     def hitbot_z_callback(self, msg):
         self.hitbot_z = msg.data
+
+    def hitbot_r_callback(self, msg):
+        self.hitbot_r = msg.data
 
     def set_gpio_callback(self, request, response):
         max_retries = 3
@@ -175,7 +187,7 @@ class HitbotController(Node):
         while rclpy.ok():
             try:
                 rclpy.spin_once(self)
-                self.robot.new_movej_xyz_lr(self.hitbot_x, self.hitbot_y, self.hitbot_z, 0, 100, 1, 1)
+                self.robot.new_movej_xyz_lr(self.hitbot_x, self.hitbot_y, self.hitbot_z, self.hitbot_r, 100, 1, 1)
                 self.robot.wait_stop()
             except ValueError as e:
                 print("Error:", str(e))
