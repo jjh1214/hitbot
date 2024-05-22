@@ -3,11 +3,13 @@
 [![ROS2 Humble](https://img.shields.io/badge/ROS2-Humble-red.svg)](https://index.ros.org/doc/ros2/Releases/)
 
 # Note
-This repository is ROS2-Foxy Package for the [Z-Arm of Hitbot.](https://www.hitbotrobot.com/category/product-center/4-axis-robot-arm/)
+This repository is ROS2-Humble Package for the [Z-Arm of Hitbot.](https://www.hitbotrobot.com/category/product-center/4-axis-robot-arm/)
 
 It contain python-api and .so file
 
 This repository is able Rviz2 and real robot is connected and used.
+
+If you want simulation, please visit this [link](https://github.com/jjh1214/hitbot_sim)
 
 # Build
 ### *This Package is implemented at ROS2-Humble.*
@@ -15,8 +17,8 @@ This repository is able Rviz2 and real robot is connected and used.
 ### I assume that you have installed the ros-humble-desktop package using the apt-get command.
 ### I recommand the /home/<user_home>/hitbot_ws/src
 ### Before activate simulation, please install moveit2 and gazebo
-
-
+### ex) sudo apt-get install ros-humble-moveit*
+### ex) sudo apt-get install ros-humble-moveit gazebo*
 
 $ mkdir -p ~/hitbot_ws/src
 $ cd ~/hitbot_ws/src
@@ -64,7 +66,7 @@ $ ros2 run hitbot hitbot_control_pub
 ```
 $ ros2 launch hitbot_sim hitbot_rviz2.launch.py
 ```
-![alt text](<Screenshot from 2024-05-03 09-31-35.png>)
+![alt text](/docs/Screenshot%20from%202024-05-03%2009-31-35.png)
 
 Click Randomize and check changes the links in Rviz2.
 
@@ -74,7 +76,10 @@ Click Center to return to the initial position.
 ```
 $ ros2 launch hitbot_moveit2_config demo.launch.py
 ```
-![alt text](<Screenshot from 2024-05-13 13-23-45.png>)
+![alt text](/docs/Screenshot%20from%202024-05-13%2013-23-45.png)
+
+# Run - About other simulation
+## [Please refer to this link](https://github.com/jjh1214/hitbot_sim)
 
 
 # Run - Rviz2 simulation and Real robot
